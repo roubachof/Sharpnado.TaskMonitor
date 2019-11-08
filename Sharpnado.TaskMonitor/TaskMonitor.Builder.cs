@@ -16,6 +16,10 @@ namespace Sharpnado.Tasks
             protected bool InANewTask { get; set; }
 
             protected string Name { get; set; }
+
+            protected bool IsHot { get; set; }
+
+            protected bool? ConsiderCanceledAsFaulted { get; set; }
         }
     }
 
@@ -50,6 +54,12 @@ namespace Sharpnado.Tasks
                 return this;
             }
 
+            public Builder WithConsiderCanceledAsFaulted(bool canceledAsFaulted)
+            {
+                ConsiderCanceledAsFaulted = canceledAsFaulted;
+                return this;
+            }
+
             public Builder WithName(string name)
             {
                 Name = name;
@@ -59,6 +69,12 @@ namespace Sharpnado.Tasks
             public Builder InNewTask()
             {
                 InANewTask = true;
+                return this;
+            }
+
+            public Builder WithIsHot()
+            {
+                IsHot = true;
                 return this;
             }
 
@@ -77,7 +93,9 @@ namespace Sharpnado.Tasks
                     WhenCompleted,
                     WhenSuccessfullyCompleted,
                     Name,
-                    InANewTask);
+                    InANewTask,
+                    IsHot,
+                    ConsiderCanceledAsFaulted);
             }
         }
     }
@@ -127,6 +145,18 @@ namespace Sharpnado.Tasks
                 return this;
             }
 
+            public Builder WithIsHot()
+            {
+                IsHot = true;
+                return this;
+            }
+
+            public Builder WithConsiderCanceledAsFaulted(bool canceledAsFaulted)
+            {
+                ConsiderCanceledAsFaulted = canceledAsFaulted;
+                return this;
+            }
+
             public Builder WithWhenSuccessfullyCompleted(Action<ITaskMonitor, TResult> whenSuccessfullyCompleted)
             {
                 WhenSuccessfullyCompleted = whenSuccessfullyCompleted;
@@ -149,7 +179,9 @@ namespace Sharpnado.Tasks
                     WhenCompleted,
                     WhenSuccessfullyCompleted,
                     Name,
-                    InANewTask);
+                    InANewTask,
+                    IsHot,
+                    ConsiderCanceledAsFaulted);
             }
         }
     }

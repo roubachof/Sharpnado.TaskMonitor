@@ -15,11 +15,11 @@ namespace Sharpnado.Tasks
 
         public static Action<string, Exception> ErrorHandler { get; set; } = DefaultExceptionTracer;
 
-        public static Action<ITaskMonitor, TimeSpan> StatisticsTracer { get; set; } = DefaultStatisticsTracer;
+        public static Action<ITaskMonitor, TimeSpan> StatisticsHandler { get; set; } = DefaultStatisticsTracer;
 
         public static bool HasDefaultErrorHandler => ErrorHandler == DefaultExceptionTracer;
 
-        public static bool HasDefaultStatsTracer => StatisticsTracer == DefaultStatisticsTracer;
+        public static bool HasDefaultStatsTracer => StatisticsHandler == DefaultStatisticsTracer;
 
         public static void DefaultExceptionTracer(string message, Exception exception)
         {

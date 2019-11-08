@@ -23,8 +23,9 @@ namespace Sharpnado.Tasks
             string name = null,
             bool inNewTask = false,
             bool isHot = false,
+            bool? considerCanceledAsFaulted = null,
             Action<string, Exception> errorHandler = null)
-            : base(task, whenCanceled, whenFaulted, whenCompleted, name, inNewTask, isHot, errorHandler)
+            : base(task, whenCanceled, whenFaulted, whenCompleted, name, inNewTask, isHot, considerCanceledAsFaulted, errorHandler)
         {
             _whenSuccessfullyCompleted = whenSuccessfullyCompleted;
 
@@ -44,6 +45,7 @@ namespace Sharpnado.Tasks
             Action<ITaskMonitor> whenCompleted = null,
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor> whenSuccessfullyCompleted = null,
+            bool isHot = true,
             string name = null)
         {
             return new TaskMonitor(
@@ -52,7 +54,7 @@ namespace Sharpnado.Tasks
                 whenFaulted: whenFaulted,
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,
                 name: name,
-                isHot: true);
+                isHot: isHot);
         }
 
         /// <summary>
@@ -63,6 +65,7 @@ namespace Sharpnado.Tasks
             Action<ITaskMonitor> whenCompleted = null,
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor> whenSuccessfullyCompleted = null,
+            bool isHot = true,
             string name = null)
         {
             return new TaskMonitor(
@@ -71,7 +74,7 @@ namespace Sharpnado.Tasks
                 whenFaulted: whenFaulted,
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,
                 name: name,
-                isHot: true);
+                isHot: isHot);
         }
 
         protected override void OnSuccessfullyCompleted()

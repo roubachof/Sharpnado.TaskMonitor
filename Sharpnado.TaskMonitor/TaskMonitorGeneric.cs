@@ -29,8 +29,9 @@ namespace Sharpnado.Tasks
             string name = null,
             bool inNewTask = false,
             bool isHot = false,
+            bool? considerCanceledAsFaulted = null,
             Action<string, Exception> errorHandler = null)
-            : base(task, whenCanceled, whenFaulted, whenCompleted, name, inNewTask, isHot, errorHandler)
+            : base(task, whenCanceled, whenFaulted, whenCompleted, name, inNewTask, isHot, considerCanceledAsFaulted, errorHandler)
         {
             _defaultResult = defaultResult;
             _whenSuccessfullyCompleted = whenSuccessfullyCompleted;
@@ -63,6 +64,7 @@ namespace Sharpnado.Tasks
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor, TResult> whenSuccessfullyCompleted = null,
             string name = null,
+            bool isHot = true,
             TResult defaultResult = default(TResult))
         {
             return new TaskMonitor<TResult>(
@@ -72,7 +74,7 @@ namespace Sharpnado.Tasks
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,
                 defaultResult: defaultResult,
                 name: name,
-                isHot: true);
+                isHot: isHot);
         }
 
         /// <summary>
@@ -84,6 +86,7 @@ namespace Sharpnado.Tasks
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor, TResult> whenSuccessfullyCompleted = null,
             string name = null,
+            bool isHot = true,
             TResult defaultResult = default(TResult))
         {
             return new TaskMonitor<TResult>(
@@ -93,7 +96,7 @@ namespace Sharpnado.Tasks
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,
                 defaultResult: defaultResult,
                 name: name,
-                isHot: true);
+                isHot: isHot);
         }
 
         protected override void OnSuccessfullyCompleted()

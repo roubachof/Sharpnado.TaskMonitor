@@ -27,6 +27,8 @@ namespace Sharpnado.Tasks
         /// </summary>
         private readonly bool _inNewTask;
 
+        private readonly bool? _considerCanceledAsFaulted;
+
         /// <summary>
         /// Callback called when the task has been canceled.
         /// </summary>
@@ -55,6 +57,7 @@ namespace Sharpnado.Tasks
             string name = null,
             bool inNewTask = false,
             bool isHot = false,
+            bool? considerCanceledAsFaulted = null,
             Action<string, Exception> errorHandler = null)
         {
             Task = task;
@@ -63,8 +66,9 @@ namespace Sharpnado.Tasks
             _whenCompleted = whenCompleted;
             _inNewTask = inNewTask;
             _isHot = isHot;
+            _considerCanceledAsFaulted = considerCanceledAsFaulted;
             Name = name;
-            ErrorHandler = errorHandler ?? DefaultErrorHandler;
+            ErrorHandler = errorHandler ?? TaskMonitorConfiguration.ErrorHandler;
         }
 
         /// <inheritdoc />
@@ -89,13 +93,17 @@ namespace Sharpnado.Tasks
         public bool IsSuccessfullyCompleted => Task.Status == TaskStatus.RanToCompletion;
 
         /// <inheritdoc />
-        public bool IsCanceled => !TaskMonitorConfiguration.ConsiderCanceledAsFaulted && Task.IsCanceled;
+        public bool IsCanceled => Task.IsCanceled;
 
         /// <inheritdoc />
-        public bool IsFaulted => Task.IsFaulted || (TaskMonitorConfiguration.ConsiderCanceledAsFaulted && Task.IsCanceled);
+        public bool IsFaulted => Task.IsFaulted || (ConsiderCanceledAsFaulted && Task.IsCanceled);
 
         /// <inheritdoc />
         public string Name { get; }
+
+        public bool ConsiderCanceledAsFaulted =>
+            (_considerCanceledAsFaulted.HasValue && _considerCanceledAsFaulted.Value)
+            || TaskMonitorConfiguration.ConsiderCanceledAsFaulted;
 
         public bool HasName => Name != null;
 
@@ -158,11 +166,6 @@ namespace Sharpnado.Tasks
             return builder.ToString();
         }
 
-        protected static void DefaultErrorHandler(string message, Exception exception)
-        {
-            Trace.WriteLine($"TaskMonitor|ERROR|{message}, Exception:{Environment.NewLine}{exception}");
-        }
-
         protected async Task MonitorTaskAsync(Task task)
         {
             Stopwatch stopWatch = null;
@@ -196,7 +199,7 @@ namespace Sharpnado.Tasks
                 if (stopWatch != null)
                 {
                     stopWatch.Stop();
-                    TaskMonitorConfiguration.StatisticsTracer?.Invoke(this, stopWatch.Elapsed);
+                    TaskMonitorConfiguration.StatisticsHandler?.Invoke(this, stopWatch.Elapsed);
                 }
 
                 OnTaskCompleted(task);
@@ -221,7 +224,7 @@ namespace Sharpnado.Tasks
                 ErrorHandler?.Invoke("Error while calling the WhenCompleted callback", exception);
             }
 
-            if (task.IsCanceled)
+            if (IsCanceled && !ConsiderCanceledAsFaulted)
             {
                 try
                 {
@@ -232,7 +235,7 @@ namespace Sharpnado.Tasks
                     ErrorHandler?.Invoke("Error while calling the WhenCanceled callback", exception);
                 }
             }
-            else if (task.IsFaulted)
+            else if (IsFaulted)
             {
                 try
                 {
