@@ -9,6 +9,17 @@ namespace Sharpnado.Tasks.Tests
     public class TaskMonitorTest
     {
         [Fact]
+        public async Task SimplestTest()
+        {
+            var monitor = TaskMonitor.Create(DelayAsync);
+
+            await monitor.TaskCompleted;
+
+            Assert.False(monitor.IsNotCompleted);
+            Assert.True(monitor.IsSuccessfullyCompleted);
+        }
+
+        [Fact]
         public async Task NominalTest()
         {
             bool isCompleted = false;
@@ -87,6 +98,37 @@ namespace Sharpnado.Tasks.Tests
         }
 
         [Fact]
+        public async Task InNewTaskTest()
+        {
+            int threadId = Thread.CurrentThread.ManagedThreadId;
+            var monitor = TaskMonitor<int>.Create(
+                DelayThreadIdAsync,
+                inNewTask: true);
+
+            await monitor.TaskCompleted;
+
+            Assert.NotEqual(threadId, monitor.Result);
+        }
+
+        [Fact]
+        public async Task UseMonitorAsDecoratedFaultTest()
+        {
+            TaskMonitorConfiguration.LogStatistics = true;
+            TaskMonitorConfiguration.StatisticsHandler = TaskMonitorConfiguration.DefaultStatisticsTracer;
+
+            var monitor = TaskMonitor.Create(DelayFaultAsync, name: "UseMonitorAsDecoratedFaultTest");
+
+            try
+            {
+                await Assert.ThrowsAsync<Exception>(() => monitor.Task);
+            }
+            finally
+            {
+                TaskMonitorConfiguration.LogStatistics = false;
+            }
+        }
+
+        [Fact]
         public async Task DisplayStatisticsTest()
         {
             TaskMonitorConfiguration.LogStatistics = true;
@@ -99,7 +141,7 @@ namespace Sharpnado.Tasks.Tests
         {
             bool statsHandlerCalled = false;
             TaskMonitorConfiguration.LogStatistics = true;
-            TaskMonitorConfiguration.StatisticsHandler = (m, time) =>
+            TaskMonitorConfiguration.StatisticsHandler = (t, time) =>
             {
                 statsHandlerCalled = true;
                 Assert.True(time.TotalMilliseconds > 0);
@@ -116,7 +158,7 @@ namespace Sharpnado.Tasks.Tests
         {
             bool errorHandlerCalled = false;
             TaskMonitorConfiguration.LogStatistics = true;
-            TaskMonitorConfiguration.ErrorHandler = (m, t) =>
+            TaskMonitorConfiguration.ErrorHandler = (t, m, e) =>
             {
                 errorHandlerCalled = true;
             };
@@ -206,6 +248,12 @@ namespace Sharpnado.Tasks.Tests
         private async Task DelayAsync()
         {
             await Task.Delay(200);
+        }
+
+        private async Task<int> DelayThreadIdAsync()
+        {
+            await Task.Delay(200);
+            return Thread.CurrentThread.ManagedThreadId;
         }
 
         private async Task DelayFaultAsync()

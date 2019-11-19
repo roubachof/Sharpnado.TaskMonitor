@@ -24,7 +24,7 @@ namespace Sharpnado.Tasks
             bool inNewTask = false,
             bool isHot = false,
             bool? considerCanceledAsFaulted = null,
-            Action<string, Exception> errorHandler = null)
+            Action<ITaskMonitor, string, Exception> errorHandler = null)
             : base(task, whenCanceled, whenFaulted, whenCompleted, name, inNewTask, isHot, considerCanceledAsFaulted, errorHandler)
         {
             _whenSuccessfullyCompleted = whenSuccessfullyCompleted;
@@ -46,7 +46,8 @@ namespace Sharpnado.Tasks
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor> whenSuccessfullyCompleted = null,
             bool isHot = true,
-            string name = null)
+            string name = null,
+            bool inNewTask = false)
         {
             return new TaskMonitor(
                 task,
@@ -54,7 +55,8 @@ namespace Sharpnado.Tasks
                 whenFaulted: whenFaulted,
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,
                 name: name,
-                isHot: isHot);
+                isHot: isHot,
+                inNewTask: inNewTask);
         }
 
         /// <summary>
@@ -66,7 +68,8 @@ namespace Sharpnado.Tasks
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor> whenSuccessfullyCompleted = null,
             bool isHot = true,
-            string name = null)
+            string name = null,
+            bool inNewTask = false)
         {
             return new TaskMonitor(
                 task(),
@@ -74,7 +77,8 @@ namespace Sharpnado.Tasks
                 whenFaulted: whenFaulted,
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,
                 name: name,
-                isHot: isHot);
+                isHot: isHot,
+                inNewTask: inNewTask);
         }
 
         protected override void OnSuccessfullyCompleted()
@@ -85,7 +89,7 @@ namespace Sharpnado.Tasks
             }
             catch (Exception exception)
             {
-                ErrorHandler?.Invoke("Error while calling the WhenSuccessfullyCompleted callback", exception);
+                ErrorHandler?.Invoke(this, "Error while calling the WhenSuccessfullyCompleted callback", exception);
             }
         }
     }

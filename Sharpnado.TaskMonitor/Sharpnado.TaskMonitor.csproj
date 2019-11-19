@@ -1,9 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Sharpnado.TaskMonitor</AssemblyName>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeAnalysisRuleSet>StyleCopRules.ruleset</CodeAnalysisRuleSet>
     <RootNamespace>Sharpnado.Tasks</RootNamespace>
+
+    <Product>$(AssemblyName) ($(TargetFramework))</Product>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
+    <Version>1.0.0.0</Version>
+    <PackOnBuild>true</PackOnBuild>
+    <NeutralLanguage>en</NeutralLanguage>
+
+    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
+
+    <LangVersion>latest</LangVersion>
+
+    <PackageProjectUrl>https://github.com/roubachof/Sharpnado.TaskMonitor</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/roubachof/Sharpnado.TaskMonitor</RepositoryUrl>
+    <PackageTags>async, void, await, task, asynchronous, fire, forget</PackageTags>
+
+    <Title>TaskMonitor: free yourself from async void!</Title>
+    <Summary>Free yourself from async void! TaskMonitor is a task wrapper helping you to deal with "fire and forget" Task (non awaited Task).</Summary>
+    <Description>Free yourself from async void! 
+TaskMonitor is a task wrapper helping you to deal with "fire and forget" Task (non awaited Task) in a async/await environment.
+Featuring:
+
+* Delegates for all states of the loaded task
+* Builder pattern for more elegant construction and deferred execution
+* Support for task with result
+* Default handling of errors and statistics
+* Global configuration for statistics and errors handler
+* Consider globally or locally the cancel state as faulted to simplify your workflow</Description>
+
+    <Owners>Jean-Marie Alfonsi</Owners>
+    <Authors>Jean-Marie Alfonsi</Authors>
+    <Copyright>Copyright 2019 Sharpnado</Copyright>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

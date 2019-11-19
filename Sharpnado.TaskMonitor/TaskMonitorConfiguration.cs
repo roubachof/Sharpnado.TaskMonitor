@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sharpnado.Tasks
 {
@@ -13,7 +11,7 @@ namespace Sharpnado.Tasks
 
         public static bool ConsiderCanceledAsFaulted { get; set; } = false;
 
-        public static Action<string, Exception> ErrorHandler { get; set; } = DefaultExceptionTracer;
+        public static Action<ITaskMonitor, string, Exception> ErrorHandler { get; set; } = DefaultExceptionTracer;
 
         public static Action<ITaskMonitor, TimeSpan> StatisticsHandler { get; set; } = DefaultStatisticsTracer;
 
@@ -21,13 +19,13 @@ namespace Sharpnado.Tasks
 
         public static bool HasDefaultStatsTracer => StatisticsHandler == DefaultStatisticsTracer;
 
-        public static void DefaultExceptionTracer(string message, Exception exception)
+        public static void DefaultExceptionTracer(ITaskMonitor taskMonitor, string message, Exception exception)
         {
-            Trace.WriteLine(ExceptionTracerFormatter(message, exception));
+            Trace.WriteLine(ExceptionTracerFormatter(taskMonitor, message, exception));
         }
 
-        public static string ExceptionTracerFormatter(string message, Exception exception)
-            => $"TaskMonitor|ERROR|{Thread.CurrentThread.ManagedThreadId:000}|{message}{Environment.NewLine}Exception:{exception}{Environment.NewLine}";
+        public static string ExceptionTracerFormatter(ITaskMonitor taskMonitor, string message, Exception exception)
+            => $"TaskMonitor|ERROR|{Thread.CurrentThread.ManagedThreadId:000}|{message}{Environment.NewLine}Exception:{exception}";
 
         public static void DefaultStatisticsTracer(ITaskMonitor taskMonitor, TimeSpan taskExecutionTime)
         {

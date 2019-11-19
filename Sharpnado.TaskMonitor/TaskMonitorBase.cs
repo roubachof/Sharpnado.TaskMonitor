@@ -15,7 +15,7 @@ namespace Sharpnado.Tasks
         /// <summary>
         /// Instance logger.
         /// </summary>
-        protected readonly Action<string, Exception> ErrorHandler;
+        protected readonly Action<ITaskMonitor, string, Exception> ErrorHandler;
 
         /// <summary>
         /// If true we monitor the task in the constructor to start it.
@@ -58,7 +58,7 @@ namespace Sharpnado.Tasks
             bool inNewTask = false,
             bool isHot = false,
             bool? considerCanceledAsFaulted = null,
-            Action<string, Exception> errorHandler = null)
+            Action<ITaskMonitor, string, Exception> errorHandler = null)
         {
             Task = task;
             _whenCanceled = whenCanceled;
@@ -188,11 +188,11 @@ namespace Sharpnado.Tasks
             }
             catch (TaskCanceledException canceledException)
             {
-                ErrorHandler?.Invoke("Task has been canceled", canceledException);
+                ErrorHandler?.Invoke(this, "Task has been canceled", canceledException);
             }
             catch (Exception exception)
             {
-                ErrorHandler?.Invoke("Error in wrapped task", exception);
+                ErrorHandler?.Invoke(this, "Error in wrapped task", exception);
             }
             finally
             {
@@ -202,13 +202,13 @@ namespace Sharpnado.Tasks
                     TaskMonitorConfiguration.StatisticsHandler?.Invoke(this, stopWatch.Elapsed);
                 }
 
-                OnTaskCompleted(task);
+                OnTaskCompleted();
             }
         }
 
         protected abstract void OnSuccessfullyCompleted();
 
-        private void OnTaskCompleted(Task task)
+        private void OnTaskCompleted()
         {
             if (_areCallbacksCancelled || !HasCallbacks)
             {
@@ -221,7 +221,7 @@ namespace Sharpnado.Tasks
             }
             catch (Exception exception)
             {
-                ErrorHandler?.Invoke("Error while calling the WhenCompleted callback", exception);
+                ErrorHandler?.Invoke(this, "Error while calling the WhenCompleted callback", exception);
             }
 
             if (IsCanceled && !ConsiderCanceledAsFaulted)
@@ -232,7 +232,7 @@ namespace Sharpnado.Tasks
                 }
                 catch (Exception exception)
                 {
-                    ErrorHandler?.Invoke("Error while calling the WhenCanceled callback", exception);
+                    ErrorHandler?.Invoke(this, "Error while calling the WhenCanceled callback", exception);
                 }
             }
             else if (IsFaulted)
@@ -243,7 +243,7 @@ namespace Sharpnado.Tasks
                 }
                 catch (Exception exception)
                 {
-                    ErrorHandler?.Invoke("Error while calling the WhenFaulted callback", exception);
+                    ErrorHandler?.Invoke(this, "Error while calling the WhenFaulted callback", exception);
                 }
             }
             else

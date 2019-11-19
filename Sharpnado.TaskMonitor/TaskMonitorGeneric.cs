@@ -30,7 +30,7 @@ namespace Sharpnado.Tasks
             bool inNewTask = false,
             bool isHot = false,
             bool? considerCanceledAsFaulted = null,
-            Action<string, Exception> errorHandler = null)
+            Action<ITaskMonitor, string, Exception> errorHandler = null)
             : base(task, whenCanceled, whenFaulted, whenCompleted, name, inNewTask, isHot, considerCanceledAsFaulted, errorHandler)
         {
             _defaultResult = defaultResult;
@@ -65,6 +65,7 @@ namespace Sharpnado.Tasks
             Action<ITaskMonitor, TResult> whenSuccessfullyCompleted = null,
             string name = null,
             bool isHot = true,
+            bool inNewTask = false,
             TResult defaultResult = default(TResult))
         {
             return new TaskMonitor<TResult>(
@@ -74,7 +75,8 @@ namespace Sharpnado.Tasks
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,
                 defaultResult: defaultResult,
                 name: name,
-                isHot: isHot);
+                isHot: isHot,
+                inNewTask: inNewTask);
         }
 
         /// <summary>
@@ -87,6 +89,7 @@ namespace Sharpnado.Tasks
             Action<ITaskMonitor, TResult> whenSuccessfullyCompleted = null,
             string name = null,
             bool isHot = true,
+            bool inNewTask = false,
             TResult defaultResult = default(TResult))
         {
             return new TaskMonitor<TResult>(
@@ -96,7 +99,8 @@ namespace Sharpnado.Tasks
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,
                 defaultResult: defaultResult,
                 name: name,
-                isHot: isHot);
+                isHot: isHot,
+                inNewTask: inNewTask);
         }
 
         protected override void OnSuccessfullyCompleted()
@@ -107,7 +111,7 @@ namespace Sharpnado.Tasks
             }
             catch (Exception exception)
             {
-                ErrorHandler?.Invoke("Error while calling the WhenSuccessfullyCompleted callback", exception);
+                ErrorHandler?.Invoke(this, "Error while calling the WhenSuccessfullyCompleted callback", exception);
             }
         }
     }
@@ -123,8 +127,6 @@ namespace Sharpnado.Tasks
         public TaskStatus Status => TaskStatus.Created;
 
         public bool IsNotStarted => true;
-
-        public bool IsRunning { get; }
 
         public bool IsCompleted { get; }
 
