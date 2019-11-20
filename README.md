@@ -4,6 +4,8 @@
 
 `TaskMonitor` is a task wrapper component helping you to deal with "fire and forget" `Task` (non awaited task) by implementing async/await best practices.
 
+![Sharpnado.TaskMonitor](https://img.shields.io/nuget/v/Sharpnado.TaskMonitor.svg)
+
 It offers:
 
 * Safe execution of all your async tasks: taylor-made for `async void` scenarios and non awaited `Task`

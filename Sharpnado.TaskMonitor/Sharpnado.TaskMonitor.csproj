@@ -24,8 +24,9 @@
 
     <Title>TaskMonitor: free yourself from async void!</Title>
     <Summary>TaskMonitor is a task wrapper component helping you to deal with "fire and forget" Task (non awaited task) by implementing async/await best practices.</Summary>
-    <Description>Free yourself from async void! 
-      TaskMonitor is a task wrapper component helping you to deal with "fire and forget" Task (non awaited task) by implementing async/await best practices.
+    <Description>Free yourself from async void!
+TaskMonitor is a task wrapper component helping you to deal with "fire and forget" Task (non awaited task) by implementing async/await best practices.
+
 Featuring:
 
 * Safe execution of your non awaited tasks
@@ -48,6 +49,8 @@ Featuring:
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    
+    <None Include="..\Docs\task-monitor.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
