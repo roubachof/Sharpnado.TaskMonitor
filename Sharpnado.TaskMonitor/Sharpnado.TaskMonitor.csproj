@@ -19,6 +19,7 @@
 
     <PackageProjectUrl>https://github.com/roubachof/Sharpnado.TaskMonitor</PackageProjectUrl>
     <RepositoryUrl>https://github.com/roubachof/Sharpnado.TaskMonitor</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/roubachof/Sharpnado.TaskMonitor/master/Docs/task-monitor.png</PackageIconUrl>
     <PackageTags>async, void, await, task, asynchronous, fire, forget</PackageTags>
 
     <Title>TaskMonitor: free yourself from async void!</Title>
