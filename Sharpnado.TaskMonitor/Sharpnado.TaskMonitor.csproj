@@ -20,14 +20,15 @@
     <PackageProjectUrl>https://github.com/roubachof/Sharpnado.TaskMonitor</PackageProjectUrl>
     <RepositoryUrl>https://github.com/roubachof/Sharpnado.TaskMonitor</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/roubachof/Sharpnado.TaskMonitor/master/Docs/task-monitor.png</PackageIconUrl>
-    <PackageTags>async, void, await, task, asynchronous, fire, forget</PackageTags>
+    <PackageTags>async, void, await, task, asynchronous, fire, forget, best, practices</PackageTags>
 
     <Title>TaskMonitor: free yourself from async void!</Title>
-    <Summary>Free yourself from async void! TaskMonitor is a task wrapper helping you to deal with "fire and forget" Task (non awaited Task).</Summary>
+    <Summary>TaskMonitor is a task wrapper component helping you to deal with "fire and forget" Task (non awaited task) by implementing async/await best practices.</Summary>
     <Description>Free yourself from async void! 
-TaskMonitor is a task wrapper helping you to deal with "fire and forget" Task (non awaited Task) in a async/await environment.
+      TaskMonitor is a task wrapper component helping you to deal with "fire and forget" Task (non awaited task) by implementing async/await best practices.
 Featuring:
 
+* Safe execution of your non awaited tasks
 * Delegates for all states of the loaded task
 * Builder pattern for more elegant construction and deferred execution
 * Support for task with result
