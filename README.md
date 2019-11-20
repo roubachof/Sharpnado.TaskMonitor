@@ -2,11 +2,11 @@
 
 ![task-monitor](https://raw.githubusercontent.com/roubachof/Sharpnado.TaskMonitor/master/Docs/task-monitor.png)
 
-TaskMonitor is a task wrapper helping you to deal with "fire and forget" Task (non awaited Task) in a async/await environment.
+`TaskMonitor` is a task wrapper helping you to deal with "fire and forget" `Task` (non awaited task) in a async/await environment.
 
 It offers:
 
-* Safe execution of all your async tasks: taylor-made for `async void` scenarios and non awaited Task
+* Safe execution of all your async tasks: taylor-made for `async void` scenarios and non awaited `Task`
 * Callbacks for any states (canceled, success, completed, failure)
 * Default or custom error handler
 * Default or custom task statistics logger
