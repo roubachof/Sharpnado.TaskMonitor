@@ -7,9 +7,9 @@
     <RootNamespace>Sharpnado.Tasks</RootNamespace>
 
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
-    <Version>1.0.0.0</Version>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <AssemblyFileVersion>1.0.1.0</AssemblyFileVersion>
+    <Version>1.0.1.0</Version>
     <PackOnBuild>true</PackOnBuild>
     <NeutralLanguage>en</NeutralLanguage>
 
@@ -39,7 +39,7 @@ Featuring:
 
     <Owners>Jean-Marie Alfonsi</Owners>
     <Authors>Jean-Marie Alfonsi</Authors>
-    <Copyright>Copyright 2019 Sharpnado</Copyright>
+    <Copyright>Copyright 2020 Sharpnado</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
