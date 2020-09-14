@@ -93,7 +93,6 @@ namespace Sharpnado.Tasks.Tests
             Assert.True(isFaulted && monitor.IsFaulted);
             Assert.False(isSuccessfullyCompleted || monitor.IsSuccessfullyCompleted);
             Assert.False(monitor.IsCanceled);
-            Assert.True(isCompleted && monitor.IsCompleted);
             Assert.Equal(monitorName, monitor.Name);
         }
 
@@ -118,14 +117,8 @@ namespace Sharpnado.Tasks.Tests
 
             var monitor = TaskMonitor.Create(DelayFaultAsync, name: "UseMonitorAsDecoratedFaultTest");
 
-            try
-            {
                 await Assert.ThrowsAsync<Exception>(() => monitor.Task);
-            }
-            finally
-            {
                 TaskMonitorConfiguration.LogStatistics = false;
-            }
         }
 
         [Fact]
