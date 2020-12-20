@@ -15,7 +15,8 @@ namespace Sharpnado.Tasks
 
         /// <inheritdoc />
         internal TaskMonitor(
-            Task task,
+            Task task = null,
+            Func<Task> taskSource = null,
             Action<ITaskMonitor> whenCanceled = null,
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor> whenCompleted = null,
@@ -25,13 +26,13 @@ namespace Sharpnado.Tasks
             bool isHot = false,
             bool? considerCanceledAsFaulted = null,
             Action<ITaskMonitor, string, Exception> errorHandler = null)
-            : base(task, whenCanceled, whenFaulted, whenCompleted, name, inNewTask, isHot, considerCanceledAsFaulted, errorHandler)
+            : base(task, taskSource, whenCanceled, whenFaulted, whenCompleted, name, inNewTask, isHot, considerCanceledAsFaulted, errorHandler)
         {
             _whenSuccessfullyCompleted = whenSuccessfullyCompleted;
 
             if (isHot)
             {
-                TaskCompleted = MonitorTaskAsync(task);
+                TaskCompleted = MonitorTaskAsync();
             }
         }
 
@@ -49,7 +50,7 @@ namespace Sharpnado.Tasks
             string name = null,
             bool inNewTask = false)
         {
-            return new TaskMonitor(
+            return new (
                 task,
                 whenCompleted: whenCompleted,
                 whenFaulted: whenFaulted,
@@ -63,7 +64,7 @@ namespace Sharpnado.Tasks
         /// Creates a new task monitor watching the specified task.
         /// </summary>
         public static TaskMonitor Create(
-            Func<Task> task,
+            Func<Task> taskSource,
             Action<ITaskMonitor> whenCompleted = null,
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor> whenSuccessfullyCompleted = null,
@@ -71,8 +72,8 @@ namespace Sharpnado.Tasks
             string name = null,
             bool inNewTask = false)
         {
-            return new TaskMonitor(
-                task(),
+            return new (
+                taskSource: taskSource,
                 whenCompleted: whenCompleted,
                 whenFaulted: whenFaulted,
                 whenSuccessfullyCompleted: whenSuccessfullyCompleted,

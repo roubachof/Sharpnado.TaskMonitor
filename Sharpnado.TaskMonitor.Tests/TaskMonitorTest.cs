@@ -98,6 +98,31 @@ namespace Sharpnado.Tasks.Tests
         }
 
         [Fact]
+        public async Task NominalFaultFirstTest()
+        {
+            bool isCompleted = false;
+            bool isSuccessfullyCompleted = false;
+            bool isFaulted = false;
+            string monitorName = "NominalFaultTestTask";
+
+            var monitor = TaskMonitor.Create(
+                DelayFaultFirstAsync, 
+                t => isCompleted = true, 
+                t => isFaulted = true,
+                t => isSuccessfullyCompleted = true, 
+                name: monitorName);
+
+            await monitor.TaskCompleted;
+
+            Assert.True(isCompleted && monitor.IsCompleted);
+            Assert.True(isFaulted && monitor.IsFaulted);
+            Assert.False(isSuccessfullyCompleted || monitor.IsSuccessfullyCompleted);
+            Assert.False(monitor.IsCanceled);
+            Assert.True(isCompleted && monitor.IsCompleted);
+            Assert.Equal(monitorName, monitor.Name);
+        }
+
+        [Fact]
         public async Task InNewTaskTest()
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
@@ -254,6 +279,12 @@ namespace Sharpnado.Tasks.Tests
         {
             await Task.Delay(200);
             return Thread.CurrentThread.ManagedThreadId;
+        }
+
+        private Task DelayFaultFirstAsync()
+        {
+            throw new Exception("Fault");
+            return Task.Delay(200);
         }
 
         private async Task DelayFaultAsync()

@@ -50,7 +50,8 @@ namespace Sharpnado.Tasks
         /// Initializes a task notifier watching the specified task.
         /// </summary>
         protected TaskMonitorBase(
-            Task task,
+            Task task = null,
+            Func<Task> taskSource = null,
             Action<ITaskMonitor> whenCanceled = null,
             Action<ITaskMonitor> whenFaulted = null,
             Action<ITaskMonitor> whenCompleted = null,
@@ -60,7 +61,18 @@ namespace Sharpnado.Tasks
             bool? considerCanceledAsFaulted = null,
             Action<ITaskMonitor, string, Exception> errorHandler = null)
         {
+            if (task == null && taskSource == null)
+            {
+                throw new ArgumentException("You have to set either the task or the taskSource parameter");
+            }
+
+            if (task != null && taskSource != null)
+            {
+                throw new ArgumentException("You cannot set both the task and taskSource parameters at the same time");
+            }
+
             Task = task;
+            TaskSource = taskSource;
             _whenCanceled = whenCanceled;
             _whenFaulted = whenFaulted;
             _whenCompleted = whenCompleted;
@@ -72,31 +84,31 @@ namespace Sharpnado.Tasks
         }
 
         /// <inheritdoc />
-        public Task Task { get; }
+        public Task Task { get; protected set; }
 
         /// <inheritdoc />
         public Task TaskCompleted { get; protected set; }
 
         /// <inheritdoc />
-        public TaskStatus Status => Task.Status;
+        public TaskStatus Status => Task?.Status ?? TaskStatus.Created;
 
         /// <inheritdoc />
-        public bool IsCompleted => Task.IsCompleted;
+        public bool IsCompleted => Task?.IsCompleted ?? false;
 
         /// <inheritdoc />
-        public bool IsNotStarted => Task.Status == TaskStatus.Created;
+        public bool IsNotStarted => Status == TaskStatus.Created;
 
         /// <inheritdoc />
-        public bool IsNotCompleted => !Task.IsCompleted;
+        public bool IsNotCompleted => !IsCompleted;
 
         /// <inheritdoc />
-        public bool IsSuccessfullyCompleted => Task.Status == TaskStatus.RanToCompletion;
+        public bool IsSuccessfullyCompleted => Status == TaskStatus.RanToCompletion;
 
         /// <inheritdoc />
-        public bool IsCanceled => Task.IsCanceled;
+        public bool IsCanceled => Task?.IsCanceled ?? false;
 
         /// <inheritdoc />
-        public bool IsFaulted => Task.IsFaulted || (ConsiderCanceledAsFaulted && Task.IsCanceled);
+        public bool IsFaulted => (Task?.IsFaulted ?? false) || (ConsiderCanceledAsFaulted && IsCanceled);
 
         /// <inheritdoc />
         public string Name { get; }
@@ -108,7 +120,7 @@ namespace Sharpnado.Tasks
         public bool HasName => Name != null;
 
         /// <inheritdoc />
-        public AggregateException Exception => Task.Exception;
+        public AggregateException Exception => Task?.Exception;
 
         /// <inheritdoc />
         public Exception InnerException => Exception?.InnerException;
@@ -118,12 +130,17 @@ namespace Sharpnado.Tasks
 
         protected virtual bool HasCallbacks => _whenCanceled != null || _whenCompleted != null || _whenFaulted != null;
 
+        protected Func<Task> TaskSource { get; }
+
         /// <inheritdoc />
         public void Start()
         {
             if (!_isHot)
             {
-                TaskCompleted = MonitorTaskAsync(Task);
+                if (TaskSource != null)
+                {
+                    TaskCompleted = MonitorTaskAsync();
+                }
             }
         }
 
@@ -166,7 +183,7 @@ namespace Sharpnado.Tasks
             return builder.ToString();
         }
 
-        protected async Task MonitorTaskAsync(Task task)
+        protected async Task MonitorTaskAsync()
         {
             Stopwatch stopWatch = null;
             if (TaskMonitorConfiguration.LogStatistics)
@@ -177,21 +194,30 @@ namespace Sharpnado.Tasks
 
             try
             {
+                if (TaskSource != null)
+                {
+                    Task = TaskSource();
+                }
+
                 if (_inNewTask)
                 {
-                    await Task.Run(async () => await task);
+                    await Task.Run(async () => await Task);
                 }
                 else
                 {
-                    await task;
+                    await Task;
                 }
             }
             catch (TaskCanceledException canceledException)
             {
+                Task ??= Task.FromException(canceledException);
+
                 ErrorHandler?.Invoke(this, "Task has been canceled", canceledException);
             }
             catch (Exception exception)
             {
+                Task ??= Task.FromException(exception);
+
                 ErrorHandler?.Invoke(this, "Error in wrapped task", exception);
             }
             finally

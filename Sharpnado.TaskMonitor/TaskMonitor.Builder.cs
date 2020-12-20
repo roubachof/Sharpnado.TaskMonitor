@@ -86,8 +86,9 @@ namespace Sharpnado.Tasks
 
             public TaskMonitor Build()
             {
-                return new TaskMonitor(
-                    TaskFunc(),
+                return new (
+                    null,
+                    TaskFunc,
                     WhenCanceled,
                     WhenFaulted,
                     WhenCompleted,
@@ -171,8 +172,9 @@ namespace Sharpnado.Tasks
 
             public TaskMonitor<TResult> Build()
             {
-                return new TaskMonitor<TResult>(
-                    TaskFunc(),
+                return new (
+                    null,
+                    TaskFunc,
                     DefaultResult,
                     WhenCanceled,
                     WhenFaulted,
